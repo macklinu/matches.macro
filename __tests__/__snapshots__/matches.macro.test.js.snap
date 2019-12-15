@@ -7,6 +7,8 @@ import matches from '../src/matches.macro'
 const isNbaBasketball = matches({
   type: 'basketball',
   'ballColor': 'orange',
+  ballMaker: /spalding/i,
+  'ballMaker': /spalding/i,
   'league.type': 'NBA'
 })
 
@@ -15,6 +17,8 @@ const isNbaBasketball = matches({
 const isNbaBasketball = arg => {
   if (arg?.type === 'basketball') return true
   if (arg?.ballColor === 'orange') return true
+  if (/spalding/i.test(arg?.ballMaker)) return true
+  if (/spalding/i.test(arg?.ballMaker)) return true
   if (arg?.league?.type === 'NBA') return true
   return false
 }

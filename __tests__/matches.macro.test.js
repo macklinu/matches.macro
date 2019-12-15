@@ -34,6 +34,8 @@ pluginTester({
     const isNbaBasketball = matches({
       type: 'basketball',
       'ballColor': 'orange',
+      ballMaker: /spalding/i,
+      'ballMaker': /spalding/i,
       'league.type': 'NBA'
     })
     `,
