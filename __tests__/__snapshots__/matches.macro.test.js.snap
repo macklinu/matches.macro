@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches.macro 1. matches.macro: 1. matches.macro 1`] = `
+
+import matches from '../src/matches.macro'
+
+const isNbaBasketball = matches({
+  type: 'basketball',
+  'ballColor': 'orange',
+  'league.type': 'NBA'
+})
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+const isNbaBasketball = arg => {
+  if (arg?.type === 'basketball') return true
+  if (arg?.ballColor === 'orange') return true
+  if (arg?.league?.type === 'NBA') return true
+  return false
+}
+
+
+`;
+
+exports[`matches.macro matches() throws with non-object argument: matches() throws with non-object argument 1`] = `
+
+import matches from '../src/matches.macro'
+
+const isBasketball = matches('hello')
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+MacroError: /Users/macklin.underdown/dev/matches.macro/__tests__/matches.macro.test.js: matches() must be called as a function with one object argument
+
+`;
+
+exports[`matches.macro matches() throws without any arguments: matches() throws without any arguments 1`] = `
+
+import matches from '../src/matches.macro'
+
+const isBasketball = matches()
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+MacroError: /Users/macklin.underdown/dev/matches.macro/__tests__/matches.macro.test.js: matches() must be called as a function with one object argument
+
+`;
