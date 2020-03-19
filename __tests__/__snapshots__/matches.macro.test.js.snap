@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches.macro 1. matches.macro: 1. matches.macro 1`] = `
+exports[`matches.macro supports all features: supports all features 1`] = `
 
 import matches from '../src/matches.macro'
 
@@ -26,7 +26,7 @@ const isNbaBasketball = arg => {
 
 `;
 
-exports[`matches.macro matches() throws with non-object argument: matches() throws with non-object argument 1`] = `
+exports[`matches.macro throws with non-object argument: throws with non-object argument 1`] = `
 
 import matches from '../src/matches.macro'
 
@@ -38,7 +38,7 @@ MacroError: /Users/macklin.underdown/dev/matches.macro/__tests__/matches.macro.t
 
 `;
 
-exports[`matches.macro matches() throws without any arguments: matches() throws without any arguments 1`] = `
+exports[`matches.macro throws without any arguments: throws without any arguments 1`] = `
 
 import matches from '../src/matches.macro'
 

@@ -1,6 +1,6 @@
 import pluginTester from 'babel-plugin-tester'
 import plugin from 'babel-plugin-macros'
-import { stripIndent, stripIndents } from 'common-tags'
+import { stripIndent } from 'common-tags'
 
 pluginTester({
   plugin,
@@ -11,24 +11,26 @@ pluginTester({
   },
   tests: [
     {
-      title: 'matches() throws without any arguments',
+      title: 'throws without any arguments',
       error: true,
-      code: stripIndents`
+      code: stripIndent`
     import matches from '../src/matches.macro'
     
     const isBasketball = matches()
     `,
     },
     {
-      title: 'matches() throws with non-object argument',
+      title: 'throws with non-object argument',
       error: true,
-      code: stripIndents`
+      code: stripIndent`
     import matches from '../src/matches.macro'
     
     const isBasketball = matches('hello')
     `,
     },
-    stripIndent`
+    {
+      title: 'supports all features',
+      code: stripIndent`
     import matches from '../src/matches.macro'
     
     const isNbaBasketball = matches({
@@ -39,5 +41,6 @@ pluginTester({
       'league.type': 'NBA'
     })
     `,
+    },
   ],
 })

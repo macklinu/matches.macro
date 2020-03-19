@@ -8,7 +8,6 @@ let matchesMacro = createMacro(
     let regexpTest = template(`if (REGEXP.test(EXPRESSION)) return true`)
     let returnFalse = template(`return false`)
 
-    let returnTrue = () => t.returnStatement(t.booleanLiteral(true))
     let optionalMemberExpression = (object, property) =>
       t.optionalMemberExpression(object, property, false, true)
 
@@ -23,74 +22,68 @@ let matchesMacro = createMacro(
         )
       }
       let object = parent.arguments[0]
+      let statements = object.properties.map(property => {
+        if (t.isIdentifier(property.key)) {
+          if (t.isRegExpLiteral(property.value)) {
+            return regexpTest({
+              REGEXP: property.value,
+              EXPRESSION: optionalMemberExpression(
+                t.identifier(ARGUMENT_NAME),
+                t.identifier(property.key.name)
+              ),
+            })
+          }
+          return ifEqualsReturnTrue({
+            EXPRESSION: optionalMemberExpression(
+              t.identifier(ARGUMENT_NAME),
+              t.identifier(property.key.name)
+            ),
+            VALUE: t.stringLiteral(property.value.value),
+          })
+        }
+        if (t.isStringLiteral(property.key)) {
+          let keys = property.key.value.split('.')
+          if (keys.length === 1) {
+            if (t.isRegExpLiteral(property.value)) {
+              return regexpTest({
+                REGEXP: property.value,
+                EXPRESSION: optionalMemberExpression(
+                  t.identifier(ARGUMENT_NAME),
+                  t.identifier(property.key.value)
+                ),
+              })
+            }
+            return ifEqualsReturnTrue({
+              EXPRESSION: optionalMemberExpression(
+                t.identifier(ARGUMENT_NAME),
+                t.identifier(property.key.value)
+              ),
+              VALUE: t.stringLiteral(property.value.value),
+            })
+          }
+          let buildChain = (keys, index = 0) => {
+            if (index === keys.length - 1) {
+              return optionalMemberExpression(
+                optionalMemberExpression(
+                  t.identifier(ARGUMENT_NAME),
+                  t.identifier(keys[index - 1])
+                ),
+                t.identifier(keys[index])
+              )
+            }
+            return buildChain(keys, index + 1)
+          }
+          return ifEqualsReturnTrue({
+            EXPRESSION: buildChain(keys),
+            VALUE: t.stringLiteral(property.value.value),
+          })
+        }
+        throw new MacroError(`Unsupported object key type ${property.type}`)
+      })
       parentPath.replaceWith(
         t.arrowFunctionExpression(
           [t.identifier(ARGUMENT_NAME)],
-          t.blockStatement(
-            object.properties
-              .map(property => {
-                // console.log(property.value)
-                if (t.isIdentifier(property.key)) {
-                  if (t.isRegExpLiteral(property.value)) {
-                    return regexpTest({
-                      REGEXP: property.value,
-                      EXPRESSION: optionalMemberExpression(
-                        t.identifier(ARGUMENT_NAME),
-                        t.identifier(property.key.name)
-                      ),
-                    })
-                  }
-                  return ifEqualsReturnTrue({
-                    EXPRESSION: optionalMemberExpression(
-                      t.identifier(ARGUMENT_NAME),
-                      t.identifier(property.key.name)
-                    ),
-                    VALUE: t.stringLiteral(property.value.value),
-                  })
-                }
-                if (t.isStringLiteral(property.key)) {
-                  let keys = property.key.value.split('.')
-                  if (keys.length === 1) {
-                    if (t.isRegExpLiteral(property.value)) {
-                      return regexpTest({
-                        REGEXP: property.value,
-                        EXPRESSION: optionalMemberExpression(
-                          t.identifier(ARGUMENT_NAME),
-                          t.identifier(property.key.value)
-                        ),
-                      })
-                    }
-                    return ifEqualsReturnTrue({
-                      EXPRESSION: optionalMemberExpression(
-                        t.identifier(ARGUMENT_NAME),
-                        t.identifier(property.key.value)
-                      ),
-                      VALUE: t.stringLiteral(property.value.value),
-                    })
-                  }
-                  let buildChain = (keys, index = 0) => {
-                    if (index === keys.length - 1) {
-                      return optionalMemberExpression(
-                        optionalMemberExpression(
-                          t.identifier(ARGUMENT_NAME),
-                          t.identifier(keys[index - 1])
-                        ),
-                        t.identifier(keys[index])
-                      )
-                    }
-                    return buildChain(keys, index + 1)
-                  }
-                  return ifEqualsReturnTrue({
-                    EXPRESSION: buildChain(keys),
-                    VALUE: t.stringLiteral(property.value.value),
-                  })
-                }
-                throw new MacroError(
-                  `Unsupported object key type ${property.type}`
-                )
-              })
-              .concat(returnFalse())
-          )
+          t.blockStatement([...statements, returnFalse()])
         )
       )
     })
