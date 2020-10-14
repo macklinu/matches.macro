@@ -1,12 +1,17 @@
 {
   "name": "matches.macro",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.d.ts"
+  ],
   "author": "Mackie Underdown <macklinu@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
     "build": "babel src -d dist",
-    "test": "jest"
+    "test": "jest && tsd"
   },
   "dependencies": {
     "babel-plugin-macros": "^2.8.0"
@@ -20,6 +25,7 @@
     "babel-plugin-tester": "^8.0.1",
     "common-tags": "^1.8.0",
     "jest": "^24.9.0",
-    "prettier": "^1.19.1"
+    "prettier": "^1.19.1",
+    "tsd": "^0.13.1"
   }
 }
